@@ -1,0 +1,167 @@
+﻿@{
+    Validation.RequireField("name", "You need to enter a customer name.");
+    Validation.RequireField("width", "You need to enter a width.");
+    Validation.RequireField("height", "You need to enter a height.");
+    Validation.RequireField("drawers", "You need to enter a number of drawers.");
+    Validation.RequireField("materialUsed", "You need to enter a type of material used.");
+    Validation.RequireField("rushOrderOptions", "You need to enter a rush order option.");
+    Validation.RequireField("price", "You need to enter a price.");
+
+    var name = "";
+    var width = "";
+    var height = "";
+    var drawers = "";
+    var materialUsed = "";
+    var rushOrderOption = "";
+    var price = "$200";
+    var date = DateTime.Now;
+    List<SelectListItem> list = new List<SelectListItem>();
+    list.Add(new SelectListItem
+    {
+        Text = "Oak",
+        Value = "Oak"
+    });
+    list.Add(new SelectListItem
+    {
+        Text = "Rosewood",
+        Value = "Rosewood"
+    });
+    list.Add(new SelectListItem
+    {
+        Text = "Laminate",
+        Value = "Laminate"
+    });
+    list.Add(new SelectListItem
+    {
+        Text = "Veneer",
+        Value = "Veneer"
+    });
+    list.Add(new SelectListItem
+    {
+        Text = "Pine",
+        Value = "Pine"
+    });
+
+    List<SelectListItem> rushList = new List<SelectListItem>();
+    rushList.Add(new SelectListItem
+    {
+        Text = "3 day",
+        Value = "3 day"
+    });
+
+    rushList.Add(new SelectListItem
+    {
+        Text = "5 day",
+        Value = "5 day"
+    });
+
+    rushList.Add(new SelectListItem
+    {
+        Text = "7 day",
+        Value = "7 day"
+    });
+
+
+
+
+
+
+
+
+
+
+
+    if (IsPost && Validation.IsValid())
+    {
+        name = Request.Form["name"];
+        width = Request.Form["width"];
+        height = Request.Form["height"];
+        drawers = Request.Form["drawers"];
+        materialUsed = Request.Form["materialUsed"];
+        rushOrderOption = Request.Form["rushOrderOptions"];
+
+
+
+        var db = Database.Open("Quotes");
+        var insertCommand = "INSERT INTO Quote (Name, Width, Height, Drawers, MaterialUsed, RushOrderOptions, Price, Date) Values(@0, @1, @2, @3, @4, @5, @6, @7)";
+        db.Execute(insertCommand, name, width, height, drawers, materialUsed, rushOrderOption, price, date);
+        Response.Redirect("~/ViewAllQuotes");
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Add New Quote</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .grid {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 600px;
+        }
+
+            .grid th, .grid td {
+                border: 1px solid #C0C0C0;
+                padding: 5px;
+            }
+
+        .head {
+            background-color: #E8E8E8;
+            font-weight: bold;
+            color: #FFF;
+        }
+
+        .alt {
+            background-color: #E8E8E8;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Add New Quote</h1>
+
+    <form method="post">
+        <fieldset>
+            <legend>Quote Details:</legend>
+
+            <label>Customer Name:</label>
+            <input type="text" name="name" value="@Request.Form["name"]" />
+            @Html.ValidationMessage("name")<br />
+
+            <label>Width:</label>
+            <input type="text" name="width" value="@Request.Form["width"]" />
+            @Html.ValidationMessage("width")<br />
+
+            <label>Height:</label>
+            <input type="text" name="height" value="@Request.Form["height"]" />
+            @Html.ValidationMessage("height")<br />
+
+            <label>Number of Drawers:</label>
+            <input type="text" name="drawers" value="@Request.Form["drawers"]" />
+            @Html.ValidationMessage("drawers")<br />
+
+            <label>Materials:</label>
+            @Html.DropDownList("materialUsed", "", list, Request.Form["materialUsed"], null)
+            @Html.ValidationMessage("materialUsed")<br />
+
+            <label>Rush Order Options:</label>
+            @Html.DropDownList("rushOrderOptions", "", rushList, Request.Form["rushOrderOptions"], null)
+            @Html.ValidationMessage("rushOrderOptions")
+
+            <input type="hidden" name="price" value="@price" />
+            <input type="submit" name="submitBtn" value="Add Quote" />
+
+
+        </fieldset>
+    </form>
+
+</body>
+</html>

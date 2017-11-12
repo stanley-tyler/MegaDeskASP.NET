@@ -1,0 +1,100 @@
+﻿@{
+    var name = "";
+    var width = "";
+    var height = "";
+    var drawers = "";
+    var materialUsed = "";
+    var rushOrderOption = "";
+    var price = "";
+    var quoteId = "";
+
+    if (!IsPost)
+    {
+        if (!Request.QueryString["ID"].IsEmpty())
+        {
+            quoteId = Request.QueryString["ID"];
+            var db = Database.Open("Quotes");
+            var dbCommand = "SELECT * FROM Quote WHERE ID = @0";
+            var row = db.QuerySingle(dbCommand, quoteId);
+            name = row.Name;
+            width = row.Width;
+            height = row.Height;
+            drawers = row.Drawers;
+            materialUsed = row.MaterialUsed;
+            rushOrderOption = row.RushOrderOptions;
+            price = row.Price;
+
+
+
+        }
+        else
+        {
+            Validation.AddFormError("No Quote was selected.");
+        }
+    }
+
+    if (IsPost && !Request["buttonDelete"].IsEmpty())
+    {
+        quoteId = Request.Form["quoteId"];
+        var db = Database.Open("Quotes");
+        var deleteCommand = "DELETE FROM Quote WHERE ID = @0";
+        db.Execute(deleteCommand, quoteId);
+        Response.Redirect("~/ViewAllQuotes");
+    }
+}
+
+<html>
+<head>
+    <title>Delete a Quote</title>
+</head>
+<body>
+    <h1>Delete a Quote</h1>
+    @Html.ValidationSummary()
+    <p><a href="~/ViewAllQuotes">Return to quotes</a></p>
+
+    <form method="post">
+        <fieldset>
+            <legend>Quote Information</legend>
+
+            <p>
+                <span>Name:</span>
+                <span>@name</span>
+            </p>
+
+            <p>
+                <span>Width:</span>
+                <span>@width</span>
+            </p>
+
+            <p>
+                <span>Height:</span>
+                <span>@height</span>
+            </p>
+
+            <p>
+                <span>Drawers:</span>
+                <span>@drawers</span>
+            </p>
+
+            <p>
+                <span>Material Used:</span>
+                <span>@materialUsed</span>
+            </p>
+
+            <p>
+                <span>Rush Order Option:</span>
+                <span>@rushOrderOption</span>
+            </p>
+
+            <p>
+                <span>Price:</span>
+                <span>@price</span>
+            </p>
+
+
+            <input type="hidden" name="quoteId" value="@quoteId" />
+            <p><input type="submit" name="buttonDelete" value="Delete Quote" /></p>
+        </fieldset>
+    </form>
+</body>
+</html>

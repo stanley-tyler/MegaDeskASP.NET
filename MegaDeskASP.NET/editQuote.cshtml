@@ -1,0 +1,124 @@
+﻿@{
+    var name = "";
+    var width = "";
+    var height = "";
+    var drawers = "";
+    var materialUsed = "";
+    var rushOrderOption = "";
+    var price = "";
+    var date = DateTime.Now;
+    var quoteId = "";
+
+    if (!IsPost)
+    {
+        if (!Request.QueryString["ID"].IsEmpty())
+        {
+            quoteId = Request.QueryString["ID"];
+            var db = Database.Open("Quotes");
+            var dbCommand = "SELECT * FROM Quote WHERE ID = @0";
+            var row = db.QuerySingle(dbCommand, quoteId);
+            name = row.Name;
+            width = row.Width;
+            height = row.Height;
+            drawers = row.Drawers;
+            materialUsed = row.MaterialUsed;
+            rushOrderOption = row.RushOrderOptions;
+            price = row.Price;
+
+
+        }
+        else
+        {
+            Validation.AddFormError("No Quote was selected.");
+        }
+    }
+
+    if (IsPost && !Request["buttonDelete"].IsEmpty())
+    {
+        quoteId = Request.Form["scriptureId"];
+        var db = Database.Open("Scriptures");
+        var deleteCommand = "DELETE FROM Scriptures WHERE ID = @0";
+        db.Execute(deleteCommand, scriptureId);
+        Response.Redirect("~/Scriptures");
+    }
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Quotes Edit Page</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .grid {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 600px;
+        }
+
+            .grid th, .grid td {
+                border: 1px solid #C0C0C0;
+                padding: 5px;
+            }
+
+        .head {
+            background-color: #E8E8E8;
+            font-weight: bold;
+            color: #FFF;
+        }
+
+        .alt {
+            background-color: #E8E8E8;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Edit a Quote</h1>
+    @Html.ValidationSummary()
+
+    <form method="post">
+        <fieldset>
+            <legend>Quote Details:</legend>
+
+            <label>Customer Name:</label>
+            <input type="text" name="name" value="@name" /><br />
+
+            <label>Width:</label>
+            <input type="text" name="width" value="@width" /><br />
+
+            <label>Height:</label>
+            <input type="text" name="height" value="@height" /><br />
+
+            <label>Drawers #:</label>
+            <input type="text" name="drawers" value="@drawers" /><br />
+
+            <label>Material Used:</label>
+            <input type="text" name="materialUsed" value="@materialUsed" /><br />
+
+            <label>Rush Order Option:</label>
+            <input type="text" name="rushOrderOptions" value="@rushOrderOption" /><br />
+
+            <label>Price:</label>
+            <input type="text" name="price" value="@price" /><br />
+
+            <input type="hidden" name="quoteId" value="@quoteId" />
+            <input type="submit" name="submitBtn" value="Edit Changes" />
+
+
+        </fieldset>
+    </form>
+
+    <p><a href="~/ViewAllQuotes.cshtml">Return to View All Quotes</a></p>
+
+</body>
+</html>
